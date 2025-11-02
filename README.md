@@ -130,6 +130,11 @@ The third servo is used for the Yaw axis, but it is not actively stabilized with
 * **Why PID Fails for Yaw:** A PID controller aggressively tries to "fix" this drift, seeing it as a real error. This causes the PID to constantly chase a moving target, resulting in the jitter and shakiness we observed in testing.
 * **The Solution:** The final code uses a simple `map()` function for the yaw axis. This is a *relative* system. It doesn't fight the drift; it just follows the sensor's (drifting) idea of center. The whole system (sensor and servo) drifts together, which is far less noticeable than the jerky PID corrections.
 
+<p align="center">
+Here is a link to the demonstration video proving the stabilization capability of the system:<br>
+<a href="https://youtu.be/uVE5MIrcOps">https://youtu.be/uVE5MIrcOps</a>
+</p>
+
 ---
 ## Reflection
 *Project Journey and Key Learnings*
