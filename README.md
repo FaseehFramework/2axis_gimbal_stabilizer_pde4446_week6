@@ -3,40 +3,29 @@
 A 2-axis mechanical gimbal that actively stabilizes a platform using a PID controller. The goal is to keep an object on the platform level, even when the gimbal's base is tilted or shaken.
 
 ## Authors
-* William Kojumian (M01094013)
 * Faseeh Mohammed (M01088120)
+* William Kojumian (M01094013)
 
-## Demonstration
+## Problem Statement
+The core problem is to maintain the horizontal stability of a platform (gimbal surface) despite external physical disturbances, such as tilting or shaking, to prevent an object placed on it from falling.
 
-A video demonstrating the final stabilization capabilities and performance of the system.
-
-[![Gimbal Demo](https://img.youtube.com/vi/uVE5MIrcOps/0.jpg)](https://youtu.be/uVE5MIrcOps)
-
----
-
-## Project Objective
-
-The core problem is to maintain the horizontal stability of a platform, ensuring its **Pitch** and **Roll** angles remain as close to 0° as possible. The system is designed to actively counteract external disturbances, including:
-* External Tilting
-* Mechanical Shaking and Vibration
-* Sensor and System Drift
-* Initial Mechanical Misalignment
+* **Desired Variable:** The platform's angle of inclination (Pitch and Roll) relative to the horizontal plane must remain as close to 0° as possible.
+* **Variables Under Control:** The angular position of the two SG90 servo motors (Pitch and Roll servos).
+* **Expected Disturbances:**
+    * External Tilting: Intentional or unintentional changes in the gimbal's base orientation.
+    * Mechanical Shaking/Vibration: High-frequency, unpredictable movement leading to shakiness.
+    * System Drift: Slow, consistent deviation of the platform from its level state due to minor sensor errors.
+    * Initial Mechanical Misalignment: The physical servos were slightly tilted and not perfectly straight by default.
 
 ---
 
-## System Architecture and Control Loop
+## Solution
+Our solution is a 2-axis mechanical gimbal structure controlled by an embedded system.
 
-The solution is a closed-loop control system built on an Arduino Uno. The system follows this control flow:
-
-1.  **Sensor:** An MPU-6050 accelerometer/gyroscope measures the platform's current Pitch and Roll angles.
-2.  **Controller:** The Arduino Uno compares these angles to the desired setpoint (0° Pitch, 0° Roll) to generate an error signal.
-3.  **PID Algorithm:** A dual-axis PID controller running on the Arduino calculates the necessary correction based on the error signal.
-4.  **Actuator:** The controller sends PWM signals to the SG90 servo motors, which move the platform to counteract the error and maintain stability.
-
-![Control Loop Block Diagram](https://raw.githubusercontent.com/FaseehFramework/2axis_gimbal_stabilizer_pde4446_week6/869ed46f503f39d24770d184cb39c6af2cdb1aae/Pics/closed%20loop%20diagram.png) 
-
+* The MPU-6050 accelerometer/gyroscope measures the platform's current Pitch and Roll angles.
+* These readings are fed into a dual-axis PID controller running on an Arduino Uno.
+* The controller calculates the necessary motor adjustments to drive the angle error to zero.
 ---
-
 ## Hardware Components
 
 | Component | Purpose |
@@ -50,46 +39,54 @@ The solution is a closed-loop control system built on an Arduino Uno. The system
 
 ---
 
-## Circuit and Wiring
-
-The system is centered on the Arduino Uno.
-* **MPU-6050:** Connected via the I2C protocol (SDA and SCL pins).
-* **Servos:** The control signals for the three servos are connected to the Arduino's digital PWM pins. The servos are **powered by an external 9V battery and buck converter** to ensure sufficient current, preventing the Arduino from browning out.
-* **Kill Switch:** Wired to 9V source to act as an emergency stop.
-* **Ground:** All components share a common ground reference.
-  
-![Circuit Diagram](https://raw.githubusercontent.com/FaseehFramework/2axis_gimbal_stabilizer_pde4446_week6/869ed46f503f39d24770d184cb39c6af2cdb1aae/Pics/circuit%20diagram.png) 
----
-
-## Safety Features
-
-The project incorporates two key safety features:
-
-1.  **Physical Kill Switch:** A switch is integrated into the circuit to act as an emergency stop. Flicking this switch immediately cuts power to the actuators, preventing damage or runaway behavior in case of a malfunction.
-2.  **Software Safety Check:** The PID control loop itself acts as a continuous software safety check by constantly monitoring and ensuring the stabilization is maintained.
-
----
-
-## Mechanical Design and Structure
-
-The gimbal uses a custom 3D-printed frame. The main body is a hollow rectangular box designed to protect and manage the internal wiring. The frame includes integrated mounts for the three SG90 servo extensions to ensure a solid mechanical connection for the Pitch, Roll, and Yaw axes.
+## Gimbal Structure (3D Print)
+The system relies on a custom printed frame. This structure includes a central holder, shaped like a hollow rectangular box, designed to protect and manage the internal wiring. At the top, the frame integrates mounts for the three SG90 servo extensions to ensure mechanical connection and proper articulation of the platform. 
 
 ![Mechanical Structure](https://raw.githubusercontent.com/FaseehFramework/2axis_gimbal_stabilizer_pde4446_week6/869ed46f503f39d24770d184cb39c6af2cdb1aae/Pics/components%20stl.png) 
----
-
-## Challenges and Solutions
-
-During development, we faced two major challenges:
-
-1.  **Mechanical Misalignment:** The 3D-printed mounts did not hold the servo motors perfectly straight, resulting in a default tilt. This hardware flaw was corrected in software. We introduced a default angle offset in the code ( `85 + pitchOutput` and `79 - rolloutput`) to compensate for the physical misalignment, leveling the platform at rest.
-   
-![Code offset for Pitch and Roll]
-(https://github.com/FaseehFramework/2axis_gimbal_stabilizer_pde4446_week6/blob/main/Pics/code%20offset.png?raw=true) 
-
-3.  **Microcontroller Overload:** In early tests, running the complex PID calculations while simultaneously printing diagnostic values to the Serial Monitor caused the Arduino Uno to overload and crash. This was solved by removing all continuous `Serial.print` calls from the final production code, which significantly reduced the microcontroller's load and made the system run flawlessly.
 
 ---
+## Safety Mechanism
+The safety design incorporates two key features: 
 
+* Kill Switch (Emergency Stop): A physical switch is integrated to act as a kill switch. If any malfunction, dangerous movement, or instability occurs, flicking this switch immediately stops the system and cuts power to the actuators, preventing damage or runaway behavior. 
+* PID Control Code: The core PID loop acts as a continuous software safety check, constantly monitoring the platform's angle and ensuring the stabilization is maintained.
+---
+## Circuit Diagram
+* The system wiring is centered on the Arduino Uno. The MPU-6050 is connected via the  protocol ( and  pins). The three SG90 servo motors receive their control signals from digital PWM pins () but are powered by a separate, external  regulated supply to ensure sufficient current. All components share a common ground reference. The kill switch is wired to Digital Pin 2 using an input method (likely internal pull-up) to safely monitor the system's active state.
+![Circuit Diagram](https://raw.githubusercontent.com/FaseehFramework/2axis_gimbal_stabilizer_pde4446_week6/869ed46f503f39d24770d184cb39c6af2cdb1aae/Pics/circuit%20diagram.png) 
+---
+## Process
+Our project development followed a systematic control systems approach, moving from conceptual design to mechanical realization and finally, iterative software optimization.
+
+### 1. Conceptual Design & System Mapping
+The project began with a clear definition of the system architecture and signal flow:
+* **Input:** MPU-6050 (Pitch and Roll angles)
+* **Controller:** Dual-axis PID loop (Arduino Uno)
+* **Output:** PWM signals to SG90 Servos
+
+![Control Loop Block Diagram](https://raw.githubusercontent.com/FaseehFramework/2axis_gimbal_stabilizer_pde4446_week6/869ed46f503f39d24770d184cb39c6af2cdb1aae/Pics/closed%20loop%20diagram.png) 
+
+### 2. Mechanical Construction and Printing
+The design was 3D printed and assembled.
+* **Structure Assembly:** Assembling the hollow box holder, platform, and servo mounts.
+* **Component Mounting:** Securing the three SG90 servo motors into their extensions and attaching the MPU-6050 to the platform.
+* **Wiring Integration:** Connecting all components to the Arduino and breadboard.
+
+
+
+### Initial Alignment and Software Compensation
+During assembly, we encountered a significant mechanical flaw: the servo motors would not sit perfectly straight in the printed mounts, resulting in a slightly tilted default state. We compensated for this by introducing a code-based offset within the Arduino sketch to level the platform at rest.
+
+```cpp
+// Pitch (Servo 1, Pin 9)
+int servo1Value = constrain(85 + pitchOutput, 0, 180);
+servo1.write(servo1Value);
+
+// Roll (Servo 2, Pin 8)
+int servo2Value = constrain(79 - rollOutput, 0, 180);
+servo2.write(servo2Value);
+```
+---
 ## PID Tuning
 
 Optimizing the control loop was the most intensive part of the project. A dynamic tuning system was implemented that allows for adjusting PID constants in real-time by sending commands via the Serial Monitor. This avoided the need to re-upload code for every small change.
@@ -101,7 +98,26 @@ The tuning was sequenced by first tuning **$K_p$ (Proportional)** for responsive
 * **$K_i$ (Integral):** 0.005
 * **$K_d$ (Derivative):** 0.4
   
-![PID Serial Input](https://github.com/FaseehFramework/2axis_gimbal_stabilizer_pde4446_week6/blob/main/Pics/PIDtuning.png?raw=true) 
+![PID Serial Input](https://github.com/FaseehFramework/2axis_gimbal_stabilizer_pde4446_week6/blob/main/Pics/PIDtuning.png?raw=true)
+
+---
+## Overcoming Data Overload
+* We faced a major performance issue during testing: running the complex PID calculations while simultaneously printing diagnostic values (Pitch, Roll, P/I/D terms) to the Serial Monitor caused the Arduino Uno's microcontroller to overload and crash. 
+
+* Solution: We used the serial output temporarily for critical debugging, but removed the continuous output callsfor the final production code. This significantly reduced the microcontrollers load, allowing the system to run flawlessly thereafter. 
+---
+## Result
+* The final outcome successfully demonstrated the objective of creating a dynamically stable platform. After optimization with the manually tuned PID constants (), the closed-loop control system achieved high performance and stability. 
+
+* The gimbal met expectations by performing the following: 
+
+* Stability: The system reliably maintained the horizontal setpoint ( Pitch,  Roll) under various conditions of tilting and external disturbance. 
+
+* Object Balancing: We tested the stability with several different objects, and in every case, the object remained stationary on the platform without falling, proving the effectiveness of the control logic. 
+
+* Performance vs. Expectation: The final performance was highly satisfactory and very close to the desired expectation of achieving near-perfect level maintenance, successfully overriding the mechanical imperfections of the initial servo alignment.
+
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/uVE5MIrcOps?si=uYtsEvyQnLDbnoUt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ---
 
 ## ⭐ Bonus: 3-Axis (Yaw) Implementation
@@ -114,11 +130,43 @@ The third servo is used for the Yaw axis, but it is not actively stabilized with
 * **The Solution:** The final code uses a simple `map()` function for the yaw axis. This is a *relative* system. It doesn't fight the drift; it just follows the sensor's (drifting) idea of center. The whole system (sensor and servo) drifts together, which is far less noticeable than the jerky PID corrections.
 
 ---
+## Reflection
+*Project Journey and Key Learnings*
+This project offered significant hands-on experience in closing the loop between mechanical design and control software. Our journey reinforced several key engineering principles: 
 
-## 📚 References and Acknowledgements
-* **3D-Printable Structure:** [https://thenoobinventor.github.io/arduino-gimbal/index.html](https://thenoobinventor.github.io/arduino-gimbal/index.html)
-* **MPU-6050 Library (i2cdevlib):** [https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050](https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050)
-* **PID Control Theory:** [https://playground.arduino.cc/Libraries/PIDLibrary/](https://playground.arduino.cc/Libraries/PIDLibrary/)
+The Primacy of PID Tuning: We gained a deep understanding of how the  (Proportional),  (Integral), and (Derivative) terms interact. We learned that  handles immediate responsiveness,  is essential for dampening the system's "shakiness," and  is critical for eliminating long-term system drift—a major win in achieving the final smoothness. 
+
+*What Went Well*
+* PID Tuning Success: The implementation of dynamic, serial-input PID tuning was highly successful, allowing us to quickly test and iterate on constants, which streamlined the optimization process. 
+
+* Final Stability: The structure proved robust, and the final PID values resulted in a remarkably stable system that achieved the core objective of balancing objects reliably. 
+
+* Collaborative Testing: The 50/50 partnership during the tuning phase, with William managing the code inputs and Faseeh providing physical feedback on stability, was highly efficient and effective. 
+
+*What Went Wrong*
+* Initial Mechanical Fit: The slight misalignment of the SG90 servos within the  print required unexpected software compensation, adding complexity to the setup phase. 
+
+* Debugging Bottleneck: The system crashes caused by excessive data output to the Serial Monitor were frustrating but ultimately led to a better, leaner final code structure. We learned to rely on temporary serial outputs rather than continuous logging. 
+---
+## Contribution Matrix
+
+| Task | William Kojumian | Faseeh Mohammed | Total
+| :--- | :--- | :--- | :--- |
+| **Project Concept & Design** | 50% | 50% | 100% |
+| **Mechanical & 3D Structure** | 60% | 40% | 100% |
+| **Electronics Assembly & Wiring** | 40% | 60% | 100% |
+| **Software Development (Code)** | 40% | 60% | 100% |
+| **Testing & PID Optimization** | 50% | 50% | 100% |
+| **Documentation & Reporting** | 60% | 40% | 100% |
+| **OVERALL PROJECT CONTRIBUTION** | 50% | 50% | 100% |
 
 ---
 
+
+## References and Acknowledgements
+* **3D-Printable Structure:** [https://thenoobinventor.github.io/arduino-gimbal/index.html](https://thenoobinventor.github.io/arduino-gimbal/index.html)
+* **MPU-6050 Library (i2cdevlib):** [https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050](https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050)
+* **PID Control Theory:** [https://playground.arduino.cc/Libraries/PIDLibrary/](https://playground.arduino.cc/Libraries/PIDLibrary/)
+* > Gen AI Prompt/Input
+> Based on the provided Arduino gimbal code that utilizes the #include "I2Cdev.h" and #include "MPU6050_6Axis_MotionApps20.h" libraries, and given access to the same hardware components (an MPU6050 sensor, two SG90 servos, and an Arduino Uno), how can a PID-tuned two-axis servo gimbal (controlling pitch and roll) be implemented?
+---
