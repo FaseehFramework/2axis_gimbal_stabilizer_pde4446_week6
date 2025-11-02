@@ -121,7 +121,7 @@ The tuning was sequenced by first tuning **$K_p$ (Proportional)** for responsive
 
 ---
 
-## ⭐ Bonus: 3-Axis (Yaw) Implementation
+## Bonus: 3-Axis (Yaw) Implementation
 
 The third servo is used for the Yaw axis, but it is not actively stabilized with a PID controller. This was a conscious design choice due to the limitations of the MPU-6050 sensor.
 
