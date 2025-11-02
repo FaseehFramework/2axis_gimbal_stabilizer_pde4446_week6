@@ -117,7 +117,8 @@ The tuning was sequenced by first tuning **$K_p$ (Proportional)** for responsive
 
 * Performance vs. Expectation: The final performance was highly satisfactory and very close to the desired expectation of achieving near-perfect level maintenance, successfully overriding the mechanical imperfections of the initial servo alignment.
 
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/uVE5MIrcOps?si=uYtsEvyQnLDbnoUt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![YouTube Video](https://img.youtube.com/vi/uVE5MIrcOps/0.jpg)](https://www.youtube.com/watch?v=uVE5MIrcOps)
+
 ---
 
 ## ⭐ Bonus: 3-Axis (Yaw) Implementation
