@@ -170,9 +170,12 @@ The Primacy of PID Tuning: We gained a deep understanding of how the  (Pro
 
 
 ## References and Acknowledgements
-* **3D-Printable Structure:** [https://thenoobinventor.github.io/arduino-gimbal/index.html](https://thenoobinventor.github.io/arduino-gimbal/index.html)
-* **MPU-6050 Library (i2cdevlib):** [https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050](https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050)
-* **PID Control Theory:** [https://playground.arduino.cc/Libraries/PIDLibrary/](https://playground.arduino.cc/Libraries/PIDLibrary/)
-* > Gen AI Prompt/Input
-> Based on the provided Arduino gimbal code that utilizes the #include "I2Cdev.h" and #include "MPU6050_6Axis_MotionApps20.h" libraries, and given access to the same hardware components (an MPU6050 sensor, two SG90 servos, and an Arduino Uno), how can a PID-tuned two-axis servo gimbal (controlling pitch and roll) be implemented?
+1. **PID Control Theory:** Foundational knowledge and implementation guide for tuning the Proportional, Integral, and Derivative constants.  
+   - https://playground.arduino.cc/Libraries/PIDLibrary/  
+2. **MPU-6050 Library:** The library utilized for I²C communication, data acquisition, and stable angle calculation.  
+   - https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050  
+3. **Mechanical Design:** Source for the 3D printable gimbal structure and required mechanical components.  
+   - https://thenoobinventor.github.io/arduino-gimbal/index.html  
+4. **AI Assistance:** Portions of the documentation and code explanations were rephrased and refined with the help of Google’s Gemini AI.
+   
 ---
